@@ -1,0 +1,16 @@
+/* Tailwind v4 completely replaced @tailwind directives with @import */
+@import "tailwindcss";
+
+/* You can define custom theme variables here as per v4 specs */
+@theme {
+  --color-primary: var(--color-blue-600);
+  --color-secondary: var(--color-teal-500);
+}
+
+@layer base {
+  body {
+    background-color: var(--color-gray-50);
+    color: var(--color-gray-900);
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+}
