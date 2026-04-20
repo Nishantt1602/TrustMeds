@@ -1,26 +1,40 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect, useContext } from 'react';
+import toast from 'react-hot-toast';
+import { AuthContext } from './AuthContext';
 
 export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState(() => {
-    const savedCart = localStorage.getItem('medCart');
-    return savedCart ? JSON.parse(savedCart) : [];
-  });
+  const { user } = useContext(AuthContext);
+  const [cart, setCart] = useState([]);
 
+  // Load cart when user changes
   useEffect(() => {
-    localStorage.setItem('medCart', JSON.stringify(cart));
-  }, [cart]);
+    if (user) {
+      const savedCart = localStorage.getItem(`medCart_${user.id}`);
+      setCart(savedCart ? JSON.parse(savedCart) : []);
+    } else {
+      setCart([]);
+    }
+  }, [user]);
+
+  // Save cart to localStorage when cart changes
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem(`medCart_${user.id}`, JSON.stringify(cart));
+    }
+  }, [cart, user]);
 
   const addToCart = (item) => {
     setCart((prev) => {
       const existing = prev.find((i) => i.inventoryId === item.inventoryId);
       if (existing) {
+        toast.success('Quantity updated in cart!');
         return prev.map((i) => i.inventoryId === item.inventoryId ? { ...i, quantity: i.quantity + 1 } : i);
       }
+      toast.success('Added to cart!');
       return [...prev, { ...item, quantity: 1 }];
     });
-    alert('Added to cart!');
   };
 
   const removeFromCart = (inventoryId) => {

@@ -3,7 +3,7 @@
 
 /* You can define custom theme variables here as per v4 specs */
 @theme {
-  --color-primary: var(--color-blue-600);
+  --color-primary: var(--color-green-600);
   --color-secondary: var(--color-teal-500);
 }
 
