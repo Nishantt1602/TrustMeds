@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { connectDB } from './config/db.js';
 import authRoutes from './routes/auth.js';
+import mongoose from 'mongoose';
 import medicineRoutes from './routes/medicines.js';
 import vendorRoutes from './routes/vendor.js';
 import chatRoutes from './routes/chat.js';
@@ -24,7 +25,11 @@ app.use(cors());
 app.use(express.json());
 
 // Connect to MongoDB
-connectDB();
+if (process.env.MONGODB_URI) {
+  connectDB();
+} else {
+  console.warn('MONGODB_URI is not defined in environment variables');
+}
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -53,8 +58,10 @@ app.use((req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}
 
 export default app;
