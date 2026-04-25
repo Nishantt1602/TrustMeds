@@ -2,14 +2,17 @@ import { useState, useEffect, useContext } from 'react';
 import toast from 'react-hot-toast';
 import { AuthContext } from '../../context/AuthContext';
 import API from '../../services/api';
-import { User, Briefcase, DollarSign, Clock, MapPin, Save, Plus, Trash2, Calendar } from 'lucide-react';
+import { User, Briefcase, DollarSign, Clock, MapPin, Save, Plus, Trash2, Calendar, MessageCircle, FilePlus, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import ChatWindow from '../../components/Chat/ChatWindow';
 
 const DoctorDashboard = () => {
   const { user } = useContext(AuthContext);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [conversations, setConversations] = useState([]);
+  const [chattingWith, setChattingWith] = useState(null);
   
   // Professional details form state
   const [details, setDetails] = useState({
@@ -23,6 +26,15 @@ const DoctorDashboard = () => {
   // Slots management state
   const [slotsData, setSlotsData] = useState([]);
   const [newSlot, setNewSlot] = useState({ day: 'Monday', startTime: '09:00', endTime: '10:00' });
+
+  // Prescription Modal State
+  const [showPrescriptionModal, setShowPrescriptionModal] = useState(false);
+  const [prescriptionForm, setPrescriptionForm] = useState({
+    patientId: '',
+    diagnosis: '',
+    medicines: [{ name: '', dosage: '', frequency: 'Twice daily' }],
+    notes: ''
+  });
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -47,8 +59,18 @@ const DoctorDashboard = () => {
 
     if (user?.role === 'doctor') {
       fetchProfile();
+      fetchConversations();
     }
   }, [user]);
+
+  const fetchConversations = async () => {
+    try {
+      const { data } = await API.get('/chat/conversations');
+      setConversations(data);
+    } catch (err) {
+      console.error('Failed to fetch conversations');
+    }
+  };
 
   const handleUpdateDetails = async (e) => {
     e.preventDefault();
@@ -127,17 +149,20 @@ const DoctorDashboard = () => {
           </div>
         </div>
         <div className="flex gap-4">
+          <button 
+            onClick={() => setShowPrescriptionModal(true)}
+            className="bg-blue-600 text-white px-6 py-2 rounded-xl flex items-center gap-2 hover:bg-blue-700 transition shadow-lg shadow-blue-200"
+          >
+            <FilePlus size={18} />
+            <span className="font-bold">Issue Prescription</span>
+          </button>
           <Link to="/my-appointments" className="bg-slate-900 text-white px-6 py-2 rounded-xl flex items-center gap-2 hover:bg-slate-800 transition shadow-lg shadow-slate-200">
             <Calendar size={18} />
             <span className="font-bold">Appointments</span>
           </Link>
-          <div className="bg-green-50 px-4 py-2 rounded-xl border border-green-100 text-center text-green-700">
+          <div className="bg-green-50 px-4 py-2 rounded-xl border border-green-100 text-center text-green-700 hidden sm:block">
             <p className="text-xs uppercase font-bold tracking-wider">Fees</p>
             <p className="text-xl font-bold">₹{profile?.fees || 0}</p>
-          </div>
-          <div className="bg-purple-50 px-4 py-2 rounded-xl border border-purple-100 text-center text-purple-700">
-            <p className="text-xs uppercase font-bold tracking-wider">Experience</p>
-            <p className="text-xl font-bold">{profile?.experienceYears || 0} Yrs</p>
           </div>
         </div>
       </div>
@@ -308,15 +333,174 @@ const DoctorDashboard = () => {
                 Add Slot
               </button>
             </div>
-            <div className="mt-8 p-4 bg-slate-800/50 rounded-2xl border border-slate-700/50">
-              <h4 className="text-sm font-bold text-blue-400 mb-2 uppercase tracking-wider">Note</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Adding slots allows patients to book appointments with you. Make sure your intervals are at least 30-60 minutes for a standard consultation.
+          </div>
+
+          {/* Recent Chats Section */}
+          <div className="bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm">
+            <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+              <MessageCircle className="text-blue-500" />
+              Recent Conversations
+            </h2>
+            {conversations.length === 0 ? (
+              <p className="text-gray-500 text-center py-10 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+                No active chats yet.
               </p>
-            </div>
+            ) : (
+              <div className="space-y-4">
+                {conversations.map((conv) => (
+                  <div 
+                    key={conv._id}
+                    onClick={() => setChattingWith(conv)}
+                    className="p-4 bg-gray-50 rounded-2xl hover:bg-blue-50 transition-all cursor-pointer border border-transparent hover:border-blue-100 group"
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{conv.name}</h4>
+                      <span className="text-xs text-gray-400">
+                        {new Date(conv.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-500 truncate italic">"{conv.lastMessage}"</p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Chat Window Popup */}
+      {chattingWith && (
+        <ChatWindow 
+          otherUser={chattingWith} 
+          onClose={() => setChattingWith(null)} 
+        />
+      )}
+
+      {/* Issue Prescription Modal */}
+      {showPrescriptionModal && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-[32px] max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+            <div className="p-8 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+              <div>
+                <h2 className="text-2xl font-black text-gray-900">Issue New Prescription</h2>
+                <p className="text-sm text-gray-500 mt-1">Provide medical advice and medication details.</p>
+              </div>
+              <button onClick={() => setShowPrescriptionModal(false)} className="p-2 hover:bg-white rounded-full transition-colors shadow-sm">
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="p-8 overflow-y-auto space-y-6">
+               <div className="space-y-2">
+                 <label className="text-sm font-bold text-gray-700">Patient ID / Email</label>
+                 <input 
+                   type="text"
+                   placeholder="Enter patient identifier..."
+                   className="w-full px-5 py-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-blue-500 bg-gray-50 outline-none"
+                   value={prescriptionForm.patientId}
+                   onChange={e => setPrescriptionForm({...prescriptionForm, patientId: e.target.value})}
+                 />
+               </div>
+
+               <div className="space-y-2">
+                 <label className="text-sm font-bold text-gray-700">Diagnosis</label>
+                 <textarea 
+                   rows="2"
+                   placeholder="Medical condition..."
+                   className="w-full px-5 py-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-blue-500 bg-gray-50 outline-none"
+                   value={prescriptionForm.diagnosis}
+                   onChange={e => setPrescriptionForm({...prescriptionForm, diagnosis: e.target.value})}
+                 />
+               </div>
+
+               <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <label className="text-sm font-bold text-gray-700">Medicines</label>
+                    <button 
+                      onClick={() => setPrescriptionForm({...prescriptionForm, medicines: [...prescriptionForm.medicines, { name: '', dosage: '', frequency: 'Twice daily' }]})}
+                      className="text-xs font-black text-blue-600 hover:text-blue-700 border-b-2 border-blue-100"
+                    >
+                      + Add Medicine
+                    </button>
+                  </div>
+                  {prescriptionForm.medicines.map((med, idx) => (
+                    <div key={idx} className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                      <input 
+                        placeholder="Medicine Name"
+                        className="bg-white px-3 py-2 rounded-xl text-sm border-gray-200 border"
+                        value={med.name}
+                        onChange={e => {
+                          const newMeds = [...prescriptionForm.medicines];
+                          newMeds[idx].name = e.target.value;
+                          setPrescriptionForm({...prescriptionForm, medicines: newMeds});
+                        }}
+                      />
+                      <input 
+                        placeholder="Dosage (e.g. 500mg)"
+                        className="bg-white px-3 py-2 rounded-xl text-sm border-gray-200 border"
+                        value={med.dosage}
+                        onChange={e => {
+                          const newMeds = [...prescriptionForm.medicines];
+                          newMeds[idx].dosage = e.target.value;
+                          setPrescriptionForm({...prescriptionForm, medicines: newMeds});
+                        }}
+                      />
+                      <select 
+                        className="bg-white px-3 py-2 rounded-xl text-sm border-gray-200 border"
+                        value={med.frequency}
+                        onChange={e => {
+                          const newMeds = [...prescriptionForm.medicines];
+                          newMeds[idx].frequency = e.target.value;
+                          setPrescriptionForm({...prescriptionForm, medicines: newMeds});
+                        }}
+                      >
+                         <option>Once daily</option>
+                         <option>Twice daily</option>
+                         <option>Thrice daily</option>
+                         <option>As needed</option>
+                      </select>
+                    </div>
+                  ))}
+               </div>
+
+               <div className="space-y-2">
+                 <label className="text-sm font-bold text-gray-700">Additional Notes</label>
+                 <textarea 
+                   rows="3"
+                   placeholder="Lifestyle advice or follow-up instructions..."
+                   className="w-full px-5 py-4 rounded-2xl border border-gray-200 focus:ring-2 focus:ring-blue-500 bg-gray-50 outline-none"
+                   value={prescriptionForm.notes}
+                   onChange={e => setPrescriptionForm({...prescriptionForm, notes: e.target.value})}
+                 />
+               </div>
+            </div>
+
+            <div className="p-8 border-t border-gray-100 bg-gray-50 flex gap-4">
+              <button 
+                onClick={() => setShowPrescriptionModal(false)}
+                className="flex-1 py-4 rounded-2xl font-bold text-gray-600 hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={async () => {
+                  try {
+                    await API.post('/prescriptions', prescriptionForm);
+                    toast.success('Prescription issued successfully!');
+                    setShowPrescriptionModal(false);
+                    setPrescriptionForm({ patientId: '', diagnosis: '', medicines: [{ name: '', dosage: '', frequency: 'Twice daily' }], notes: '' });
+                  } catch (err) {
+                    toast.error('Failed to issue prescription');
+                  }
+                }}
+                className="flex-[2] py-4 rounded-2xl font-black bg-blue-600 text-white shadow-xl shadow-blue-200 transition transform hover:-translate-y-1 active:scale-95"
+              >
+                Confirm & Issue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

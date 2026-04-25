@@ -1,116 +1,94 @@
-# 🏥 TrustMeds | The Future of Healthcare Connectivity
+# 🏥 TrustMeds - Premium Healthcare Ecosystem
 
-![TrustMeds Banner](https://img.shields.io/badge/Status-Live-success?style=for-the-badge)
-![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
-![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
-![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+TrustMeds is a state-of-the-art healthcare platform that bridges the gap between Patients, Doctors, and Vendors. Built with a focus on modern aesthetics, real-time interaction, and secure transactions.
 
-TrustMeds is a premium, full-stack ecosystem designed to bridge the gap between medical professionals, vendors, and patients. It combines a powerful medicine search and comparison engine with a robust doctor-patient appointment booking system.
+![TrustMeds Banner](C:\Users\Hp\.gemini\antigravity\brain\ec5b235d-8533-47f4-9f3d-5ae8883cb1d8\trustmeds_3d_medical_icon_1777085616860.png)
 
----
-
-## ✨ Key Features
+## 🌟 Key Features
 
 ### 🤕 For Patients
-- **Smart Medicine Search**: Find and compare medicine prices across verified vendors.
-- **Find Doctors**: Discover medical professionals based on specialization and experience.
-- **Instant Booking**: Real-time slot selection and appointment management.
-- **AI Health Assistant**: Get instant answers to your medical queries.
+*   **Unified Search**: Find both medicines and specialist doctors in a single search bar.
+*   **Smart Cart**: Group items from multiple vendors and checkout in one click.
+*   **Health Snapshot**: Real-time tracking of active prescriptions and pending lab reports.
+*   **Appointment Checkout**: Secure payment gateway for booking doctor consultations.
+*   **AI Health Assistant**: Get instant medical guidance and symptom analysis.
 
 ### 👨‍⚕️ For Doctors
-- **Practice Management**: Set your availability, consultation fees, and profile.
-- **Appointment Dashboard**: Track and manage your upcoming patient visits.
-- **Professional Growth**: Showcase your experience and qualifications.
+*   **Dynamic Hub**: Manage on-duty status, appointment queues, and patient records.
+*   **Slot Management**: Highly flexible availability scheduler with real-time booking updates.
+*   **Home Visit Surcharge**: Define custom fees for home consultations.
+*   **Secure Chat**: Real-time patient communication via a premium chat interface.
 
 ### 🏪 For Vendors
-- **Inventory Control**: Manage stocks and pricing in real-time.
-- **Order Analytics**: Handle incoming patient orders with ease.
-- **Verified Status**: Build trust with verified badges and verified addresses.
+*   **Inventory Control**: Advanced stock tracking with low-stock alerts.
+*   **Revenue Analytics**: Track daily earnings and pending orders at a glance.
+*   **Order Fulfillment**: Streamlined status updates from Pending to Dispatched.
 
 ---
 
-## 🛠️ Architecture & Tech Stack
+## 📸 Premium Interface Highlights
 
-| Layer | Technologies |
-| :--- | :--- |
-| **Frontend** | React 19, Vite, Tailwind CSS v4, Lucide Icons |
-| **Backend** | Node.js, Express.js |
-| **Database** | MongoDB Atlas, Mongoose ODM |
-| **Security** | JWT (JSON Web Tokens), Bcrypt.js |
-| **DevOps** | Docker, Docker-compose, Vercel-ready |
+| Pharmacy Services | Expert Consultations | Health Monitoring |
+| :---: | :---: | :---: |
+| ![Medicine](C:\Users\Hp\.gemini\antigravity\brain\ec5b235d-8533-47f4-9f3d-5ae8883cb1d8\trustmeds_3d_medical_icon_1777085616860.png) | ![Doctor](C:\Users\Hp\.gemini\antigravity\brain\ec5b235d-8533-47f4-9f3d-5ae8883cb1d8\trustmeds_3d_doctor_icon_1777085631821.png) | ![Snapshot](C:\Users\Hp\.gemini\antigravity\brain\ec5b235d-8533-47f4-9f3d-5ae8883cb1d8\trustmeds_3d_health_snapshot_1777085647044.png) |
 
 ---
 
-## 🚀 Getting Started
-
-### 🐳 The Docker Way (Recommended)
-Launch the entire universe with a single command:
-```bash
-docker-compose up
-```
-*Wait for the logs to clear, then visit: `http://localhost:5173`*
-
-### 💻 Manual Setup
-
-#### 1. Backend ⚙️
-```bash
-cd backend
-npm install
-npm run seed  # Loads initial medicine data
-npm run dev
-```
-
-#### 2. Frontend 🎨
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
----
-
-## 📁 Project Map
+## 📂 Project Structure
 
 ```text
 TrustMeds/
-├── 📂 backend/                 # Express Server & Logic
-│   ├── 🛠️ models/              # User, Appointment, Medicine, Order
-│   ├── 🛤️ routes/              # API Endpoints
-│   └── 🧪 seeds/               # Initial Data
-├── 📂 frontend/                # React Universal UI
-│   ├── 📄 App.jsx              # Routing Engine
-│   └── 📂 pages/               # Functional Views
-└── 🐳 docker-compose.yml       # Container Orchestration
+├── frontend/                # React Frontend (Vite)
+│   ├── src/
+│   │   ├── components/      # Reusable UI (Navbar, Chat, PrivateRoutes)
+│   │   ├── context/         # Auth & Cart State Management
+│   │   ├── pages/
+│   │   │   ├── Auth/        # Login & Multi-Role Registration
+│   │   │   ├── Core/        # Search, Cart, Checkout, Appointment Booking
+│   │   │   ├── Dashboard/   # Profile, MyAppointments
+│   │   │   └── Home/        # Role-specific Hubs (Patient, Doctor, Vendor)
+│   │   └── services/        # Axios API Configuration
+├── backend/                 # Node.js Express Backend
+│   ├── src/
+│   │   ├── config/          # DB & Environment Config
+│   │   ├── middlewares/     # Auth & Role-based Guardrails
+│   │   ├── models/          # Mongoose Schemas (User, Order, Appointment)
+│   │   └── routes/          # API Endpoints
+└── README.md                # Documentation
 ```
 
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js v16+
+- MongoDB (Local or Atlas)
+
+### Local Development
+1. **Clone the repository**
+2. **Setup Backend**:
+   ```bash
+   cd backend
+   npm install
+   # Create .env with MONGO_URI, PORT, JWT_SECRET
+   npm start
+   ```
+3. **Setup Frontend**:
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+
+## 🌍 Deployment Guide
+
+### MongoDB Atlas
+1. Create a cluster on MongoDB Atlas.
+2. Get your connection string.
+3. Replace `localhost` in your backend `.env` with the Atlas URI.
+
+### Vercel (Frontend & Backend)
+1. **Backend**: Push to GitHub, connect to Vercel, set Environment Variables.
+2. **Frontend**: Push to GitHub, connect to Vercel, set `VITE_API_URL` to your backend URL.
+
 ---
-
-## 📝 API Cheat Sheet
-
-| Endpoint | Method | Role | Description |
-| :--- | :--- | :--- | :--- |
-| `/api/auth/register` | `POST` | Public | Create Patient/Doctor/Vendor accounts |
-| `/api/public/doctors` | `GET` | Public | Search the doctor directory |
-| `/api/appointments/book` | `POST` | Patient | Reserve a consultation slot |
-| `/api/vendor/inventory` | `GET` | Vendor | Manage medicine stocks |
-
----
-
-## 🚢 Quick Deployment
-
-1. **GitHub**: Push your repo.
-2. **Backend**: Deploy the `/backend` folder to Railway/Render.
-3. **Frontend**: Deploy the `/frontend` folder to Vercel.
-4. **Env**: Add `MONGODB_URI` and `JWT_SECRET` to your hosting provider.
-
----
-
-## 🤝 Contribution & License
-
-We ❤️ contributors! Feel free to fork the repo and open a PR.
-This project is open-source and ready for the community.
-
----
-
-**Made with ❤️ by the TrustMeds Team**
+Built with ❤️ by Antigravity for the TrustMeds Community.

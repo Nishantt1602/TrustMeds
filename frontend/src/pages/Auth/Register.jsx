@@ -26,7 +26,7 @@ const Register = () => {
       await API.post('/auth/register', payload);
       // Auto login after register
       await login(formData.email, formData.password, formData.role);
-      navigate('/search');
+      navigate('/');
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed');
       setLoading(false);
@@ -34,27 +34,27 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen flex items-center justify-center px-4 py-20 bg-gray-50">
       <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200 w-full max-w-lg">
         <h2 className="text-3xl font-bold text-gray-900 text-center mb-6">Create an Account</h2>
         {error && <div className="bg-red-50 text-red-500 p-3 rounded-md mb-4 text-center">{error}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-3 gap-2 mb-4">
-            <label className="border p-2 rounded-lg cursor-pointer text-center flex flex-col items-center gap-1 justify-center has-[:checked]:bg-green-50 has-[:checked]:border-green-500 transition">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+            <label className="border p-4 rounded-xl cursor-pointer text-center flex flex-row sm:flex-col items-center gap-3 justify-center has-[:checked]:bg-green-50 has-[:checked]:border-green-500 transition-all hover:bg-gray-50">
               <input type="radio" name="role" value="patient" checked={formData.role === 'patient'} onChange={(e) => setFormData({ ...formData, role: e.target.value })} className="hidden" />
-              <span className="text-xl">🤕</span>
-              <span className="text-xs font-medium">Patient</span>
+              <span className="text-2xl">🤕</span>
+              <span className="text-sm font-bold">Patient</span>
             </label>
-            <label className="border p-2 rounded-lg cursor-pointer text-center flex flex-col items-center gap-1 justify-center has-[:checked]:bg-green-50 has-[:checked]:border-green-500 transition">
+            <label className="border p-4 rounded-xl cursor-pointer text-center flex flex-row sm:flex-col items-center gap-3 justify-center has-[:checked]:bg-green-50 has-[:checked]:border-green-500 transition-all hover:bg-gray-50">
               <input type="radio" name="role" value="vendor" checked={formData.role === 'vendor'} onChange={(e) => setFormData({ ...formData, role: e.target.value })} className="hidden" />
-              <span className="text-xl">🏪</span>
-              <span className="text-xs font-medium">Vendor</span>
+              <span className="text-2xl">🏪</span>
+              <span className="text-sm font-bold">Vendor</span>
             </label>
-            <label className="border p-2 rounded-lg cursor-pointer text-center flex flex-col items-center gap-1 justify-center has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 transition">
+            <label className="border p-4 rounded-xl cursor-pointer text-center flex flex-row sm:flex-col items-center gap-3 justify-center has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 transition-all hover:bg-gray-50">
               <input type="radio" name="role" value="doctor" checked={formData.role === 'doctor'} onChange={(e) => setFormData({ ...formData, role: e.target.value })} className="hidden" />
-              <span className="text-xl">👨‍⚕️</span>
-              <span className="text-xs font-medium">Doctor</span>
+              <span className="text-2xl">👨‍⚕️</span>
+              <span className="text-sm font-bold">Doctor</span>
             </label>
           </div>
 

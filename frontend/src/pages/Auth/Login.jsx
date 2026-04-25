@@ -21,7 +21,7 @@ const Login = () => {
     const res = await login(email, password, selectedRole);
     if (res.success) {
       toast.success('Login successful!');
-      navigate('/search');
+      navigate('/');
     } else {
       toast.error(res.message);
       setError(res.message);
@@ -37,28 +37,27 @@ const Login = () => {
           <p className="text-gray-500 mt-2">Sign in to your TrustMeds account</p>
         </div>
 
-        {/* Role Selection */}
-        <div className="grid grid-cols-3 gap-2 mb-6">
-          <label className={`border p-2 rounded-lg cursor-pointer text-center flex items-center flex-col gap-1 justify-center transition ${
-            selectedRole === 'patient' ? 'bg-green-50 border-green-500 text-green-700' : 'border-gray-300 hover:border-gray-400'
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
+          <label className={`border p-4 rounded-xl cursor-pointer text-center flex flex-row sm:flex-col items-center gap-3 justify-center transition-all ${
+            selectedRole === 'patient' ? 'bg-green-50 border-green-500 text-green-700' : 'border-gray-200 hover:bg-gray-50'
           }`}>
             <input type="radio" name="role" value="patient" checked={selectedRole === 'patient'} onChange={(e) => setSelectedRole(e.target.value)} className="hidden" />
-            <User className="w-4 h-4" />
-            <span className="text-xs font-medium">Patient</span>
+            <User className="w-5 h-5" />
+            <span className="text-sm font-bold">Patient</span>
           </label>
-          <label className={`border p-2 rounded-lg cursor-pointer text-center flex items-center flex-col gap-1 justify-center transition ${
-            selectedRole === 'vendor' ? 'bg-orange-50 border-orange-500 text-orange-700' : 'border-gray-300 hover:border-gray-400'
+          <label className={`border p-4 rounded-xl cursor-pointer text-center flex flex-row sm:flex-col items-center gap-3 justify-center transition-all ${
+            selectedRole === 'vendor' ? 'bg-orange-50 border-orange-500 text-orange-700' : 'border-gray-200 hover:bg-gray-50'
           }`}>
             <input type="radio" name="role" value="vendor" checked={selectedRole === 'vendor'} onChange={(e) => setSelectedRole(e.target.value)} className="hidden" />
-            <Store className="w-4 h-4" />
-            <span className="text-xs font-medium">Vendor</span>
+            <Store className="w-5 h-5" />
+            <span className="text-sm font-bold">Vendor</span>
           </label>
-          <label className={`border p-2 rounded-lg cursor-pointer text-center flex items-center flex-col gap-1 justify-center transition ${
-            selectedRole === 'doctor' ? 'bg-blue-50 border-blue-500 text-blue-700' : 'border-gray-300 hover:border-gray-400'
+          <label className={`border p-4 rounded-xl cursor-pointer text-center flex flex-row sm:flex-col items-center gap-3 justify-center transition-all ${
+            selectedRole === 'doctor' ? 'bg-blue-50 border-blue-500 text-blue-700' : 'border-gray-200 hover:bg-gray-50'
           }`}>
             <input type="radio" name="role" value="doctor" checked={selectedRole === 'doctor'} onChange={(e) => setSelectedRole(e.target.value)} className="hidden" />
-            <Stethoscope className="w-4 h-4" />
-            <span className="text-xs font-medium">Doctor</span>
+            <Stethoscope className="w-5 h-5" />
+            <span className="text-sm font-bold">Doctor</span>
           </label>
         </div>
 

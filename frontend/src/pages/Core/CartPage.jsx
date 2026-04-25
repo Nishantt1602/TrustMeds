@@ -53,10 +53,9 @@ const CartPage = () => {
 
     setLoading(true);
     try {
-      await API.post('/orders', { vendorId, vendorName, items, totalAmount });
-      alert('🎉 Order placed successfully!');
+      const response = await API.post('/orders', { vendorId, vendorName, items, totalAmount });
       clearCart();
-      navigate('/search');
+      navigate('/order-success', { state: { order: response.data.order } });
     } catch (error) {
       alert('Error placing order');
     } finally {
@@ -100,8 +99,11 @@ const CartPage = () => {
             <span className="text-gray-600">Total Amount</span>
             <p className="text-3xl font-extrabold text-green-600">₹{totalAmount}</p>
           </div>
-          <button onClick={handleCheckout} disabled={loading} className="bg-green-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-green-700 transition">
-            {loading ? 'Processing...' : 'Place Order'}
+          <button 
+            onClick={() => navigate('/checkout')} 
+            className="bg-green-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-green-700 transition"
+          >
+            Proceed to Checkout
           </button>
         </div>
       </div>

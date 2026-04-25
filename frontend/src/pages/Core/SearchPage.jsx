@@ -27,7 +27,8 @@ const SearchPage = () => {
   useEffect(() => {
     if (user) {
       API.get('/wishlist').then(res => {
-        setUserWishlist(res.data.map(item => item.medicineId?._id || item.medicineId));
+        // Store composite key of medicineId and vendorId
+        setUserWishlist(res.data.map(item => `${item.medicineId?._id || item.medicineId}-${item.vendorId?._id || item.vendorId}`));
       }).catch(err => console.error('Failed to load wishlist'));
     } else {
       setUserWishlist([]);
@@ -99,6 +100,7 @@ const SearchPage = () => {
         vendorId: store.vendorId,
         vendorName: store.vendorName,
         price: store.price,
+        inventoryId: store.inventoryId,
       };
 
       const token = localStorage.getItem('userInfo')
@@ -116,11 +118,14 @@ const SearchPage = () => {
         },
       });
 
-      setUserWishlist(prev => [...prev, medicine.medicineInfo._id]);
+      const compositeKey = `${medicine.medicineInfo._id}-${store.vendorId}`;
+      if (!userWishlist.includes(compositeKey)) {
+        setUserWishlist(prev => [...prev, compositeKey]);
+      }
       toast.success('Added to Wishlist!');
     } catch (err) {
       console.error('Add to wishlist error:', err);
-      toast.error(err.response?.data?.message || 'Failed to add to Wishlist. Please try again.');
+      toast.error(err.response?.data?.message || 'Failed to add to Wishlist.');
     } finally {
       setWishlistItemId(null);
     }
@@ -182,47 +187,48 @@ const SearchPage = () => {
             {results.map((item) => (
               <div key={item.medicineInfo._id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 {/* Medicine Info Header */}
-                <div className="bg-green-50 p-6 border-b border-green-100 flex justify-between items-center">
+                <div className="bg-green-50 p-6 border-b border-green-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-900">{item.medicineInfo.name}</h2>
+                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900">{item.medicineInfo.name}</h2>
                     <p className="text-sm text-gray-600 mt-1"><strong>Composition:</strong> {item.medicineInfo.composition}</p>
                     <p className="text-sm text-gray-600"><strong>Uses:</strong> {item.medicineInfo.uses}</p>
                   </div>
-                  <div className="text-right">
-                    <span className="block text-sm text-gray-500">Starting from</span>
-                    <span className="text-3xl font-extrabold text-green-600">₹{item.cheapestPrice}</span>
+                  <div className="text-left sm:text-right">
+                    <span className="block text-xs sm:text-sm text-gray-500">Starting from</span>
+                    <span className="text-2xl sm:text-3xl font-extrabold text-green-600">₹{item.cheapestPrice}</span>
                   </div>
                 </div>
 
-                {/* Store Listings */}
-                <div className="p-6">
-                  <h3 className="text-lg font-semibold mb-4 text-gray-800">Available at these stores:</h3>
+                {/* Store Listings */}                <div className="p-4 sm:p-6">
+                  <h3 className="text-lg font-bold mb-4 text-gray-800">Available at these stores:</h3>
                   <div className="grid gap-4">
                     {item.stores.map((store, index) => {
                       const isCheapest = index === 0;
                       return (
                         <div
                           key={store.inventoryId}
-                          className={`flex justify-between items-center p-4 rounded-lg border-2 ${isCheapest ? 'border-green-500 bg-green-50' : 'border-gray-100 bg-gray-50'}`}
+                          className={`flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 sm:p-5 rounded-2xl border-2 transition-all gap-4 ${isCheapest ? 'border-green-500 bg-green-50 shadow-md shadow-green-100' : 'border-gray-100 bg-gray-50'}`}
                         >
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <h4 className="font-bold text-gray-900 text-lg">{store.storeName}</h4>
+                          <div className="flex-1">
+                            <div className="flex flex-wrap items-center gap-2 mb-1">
+                              <h4 className="font-black text-gray-900 text-lg">{store.storeName}</h4>
                               {store.isVerified && <CheckCircle className="w-4 h-4 text-green-500" title="Verified Store" />}
-                              {isCheapest && <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full font-bold">Cheapest</span>}
+                              {isCheapest && <span className="bg-green-500 text-white text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full font-black">Cheapest</span>}
                             </div>
-                            <p className="text-sm text-gray-600 flex items-center gap-1 mt-1">
-                              <MapPin className="w-4 h-4" /> {store.address}
+                            <p className="text-sm text-gray-500 font-medium flex items-start gap-1.5 leading-tight">
+                              <MapPin className="w-4 h-4 mt-0.5 shrink-0 text-gray-400" /> 
+                              <span className="line-clamp-1">{store.address}</span>
                             </p>
                           </div>
 
-                          <div className="flex items-center gap-6">
-                            <div className="text-right">
-                              <span className="block text-2xl font-bold text-gray-900">₹{store.price}</span>
-                              <span className="text-xs text-gray-500">{store.stock > 0 ? 'In Stock' : 'Out of Stock'}</span>
+                          <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-8 border-t sm:border-0 pt-4 sm:pt-0">
+                            <div className="text-left sm:text-right">
+                              <p className="text-2xl font-black text-gray-900 leading-none mb-1">₹{store.price}</p>
+                              <p className={`text-[10px] font-black uppercase tracking-widest ${store.stock > 10 ? 'text-green-600' : 'text-orange-600'}`}>
+                                {store.stock > 0 ? `${store.stock} units available` : 'Out of stock'}
+                              </p>
                             </div>
 
-                            {/* Show Add to Cart and Wishlist for users */}
                             {user && (
                               <div className="flex items-center gap-2">
                                 <button
@@ -231,6 +237,8 @@ const SearchPage = () => {
                                     medicineId: item.medicineInfo._id,
                                     medicineName: item.medicineInfo.name,
                                     storeName: store.storeName,
+                                    vendorId: store.vendorId,
+                                    vendorName: store.storeName,
                                     price: store.price
                                   })}
                                   disabled={store.stock <= 0}
@@ -242,23 +250,21 @@ const SearchPage = () => {
                                 >
                                   {store.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
                                 </button>
-
                                 {(() => {
-                                  const isWishlisted = userWishlist.includes(item.medicineInfo._id);
+                                  const mId = item.medicineInfo?._id || 'unknown';
+                                  const vId = store.vendorId || 'unknown';
+                                  const compositeKey = `${mId}-${vId}`;
+                                  const isWishlisted = (user?.wishlist || []).includes(compositeKey);
                                   return (
                                     <button
                                       onClick={() => handleAddToWishlist(store, item)}
-                                      disabled={wishlistItemId === store.inventoryId || isWishlisted}
-                                      className={`flex items-center gap-2 px-4 py-2 rounded-md font-medium transition border ${
+                                      className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all border ${
                                         isWishlisted
-                                          ? 'border-red-500 bg-red-50 text-red-600 cursor-default'
-                                          : wishlistItemId === store.inventoryId
-                                            ? 'border-red-200 bg-red-100 text-red-600 cursor-not-allowed'
-                                            : 'border-red-300 text-red-600 hover:bg-red-50'
+                                          ? 'border-red-500 bg-red-50 text-red-600'
+                                          : 'border-slate-200 text-slate-400 hover:border-red-500 hover:text-red-500'
                                       }`}
                                     >
-                                      <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-red-600 text-red-600' : ''}`} />
-                                      {isWishlisted ? 'Wishlisted' : wishlistItemId === store.inventoryId ? 'Adding...' : 'Wishlist'}
+                                      <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-red-500 text-red-500' : ''}`} />
                                     </button>
                                   );
                                 })()}
@@ -369,6 +375,8 @@ const SearchPage = () => {
                                       medicineId: medicineDetails.medicineInfo._id,
                                       medicineName: medicineDetails.medicineInfo.name,
                                       storeName: store.storeName,
+                                      vendorId: store.vendorId,
+                                      vendorName: store.storeName,
                                       price: store.price
                                     })}
                                     disabled={store.stock <= 0}
@@ -380,9 +388,11 @@ const SearchPage = () => {
                                   >
                                     {store.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
                                   </button>
-
                                   {(() => {
-                                    const isWishlisted = userWishlist.includes(medicineDetails.medicineInfo._id);
+                                    const mId = medicineDetails.medicineInfo?._id || 'unknown';
+                                    const vId = store.vendorId || 'unknown';
+                                    const compositeKey = `${mId}-${vId}`;
+                                    const isWishlisted = userWishlist.includes(compositeKey);
                                     return (
                                       <button
                                         onClick={() => handleAddToWishlist(store, medicineDetails)}

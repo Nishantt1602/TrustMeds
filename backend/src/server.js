@@ -12,6 +12,7 @@ import orderRoutes from './routes/orders.js';
 import publicRoutes from './routes/public.js';
 import doctorRoutes from './routes/doctor.js';
 import appointmentRoutes from './routes/appointments.js';
+import healthRecordRoutes from './routes/healthRecords.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 
 dotenv.config();
@@ -36,6 +37,7 @@ app.use('/api/users', usersRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/public', publicRoutes);
+app.use('/api/health-records', healthRecordRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

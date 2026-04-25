@@ -8,11 +8,11 @@ const router = express.Router();
 // Add item to wishlist
 router.post('/add', authMiddleware, async (req, res) => {
   try {
-    const { medicineId, vendorId, vendorName, price } = req.body;
+    const { medicineId, vendorId, vendorName, price, inventoryId } = req.body;
     const userId = req.user.id;
 
-    if (!medicineId || !vendorId || !vendorName || price === undefined) {
-      return res.status(400).json({ message: 'Medicine, vendor, and price are required' });
+    if (!medicineId || !vendorId || !vendorName || price === undefined || !inventoryId) {
+      return res.status(400).json({ message: 'Medicine, vendor, price and inventoryId are required' });
     }
 
     // Validate medicine exists
@@ -21,10 +21,10 @@ router.post('/add', authMiddleware, async (req, res) => {
       return res.status(404).json({ message: 'Medicine not found' });
     }
 
-    // Check if already in wishlist
-    const existingWishlist = await Wishlist.findOne({ userId, medicineId });
+    // Check if already in wishlist (Medicine + Vendor)
+    const existingWishlist = await Wishlist.findOne({ userId, medicineId, vendorId });
     if (existingWishlist) {
-      return res.status(400).json({ message: 'Item already in wishlist' });
+      return res.status(400).json({ message: 'This offer is already in your wishlist' });
     }
 
     // Add to wishlist
@@ -34,6 +34,7 @@ router.post('/add', authMiddleware, async (req, res) => {
       vendorId,
       vendorName,
       price,
+      inventoryId
     });
 
     await wishlistItem.save();

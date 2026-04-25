@@ -1,7 +1,22 @@
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { Pill, Shield, Clock, MapPin, ArrowRight, Star, Heart, Activity, Search } from 'lucide-react';
+import { Pill, Shield, Heart, Activity, Search, ArrowRight, Star, Clock, MapPin, CheckCircle } from 'lucide-react';
+import { AuthContext } from '../../context/AuthContext';
+import PatientHome from '../Home/PatientHome';
+import DoctorHome from '../Home/DoctorHome';
+import VendorHome from '../Home/VendorHome';
 
 const LandingPage = () => {
+  const { user } = useContext(AuthContext);
+
+  // If user is logged in, show their role-specific home page
+  if (user) {
+    if (user.role === 'patient') return <PatientHome />;
+    if (user.role === 'doctor') return <DoctorHome />;
+    if (user.role === 'vendor') return <VendorHome />;
+  }
+
+  // If not logged in, show the regular landing page
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
@@ -15,79 +30,41 @@ const LandingPage = () => {
               <div className="inline-flex items-center px-4 py-2 rounded-full bg-green-100 text-green-700 font-medium text-sm animate-bounce">
                 <Shield className="w-4 h-4 mr-2" /> Verified Medicines & Authentic Stores
               </div>
-              <h1 className="text-5xl lg:text-7xl font-extrabold text-gray-900 leading-tight">
+              <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-gray-900 leading-tight">
                 Your Health, <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-teal-600 font-black">Simplified.</span>
               </h1>
-              <p className="text-xl text-gray-600 max-w-lg">
+              <p className="text-lg sm:text-xl text-gray-600 max-w-lg">
                 Search, compare, and order medicines from verified local pharmacies. Get expert advice and AI-powered health monitoring all in one place.
               </p>
-              <div className="flex flex-wrap gap-4 pt-4">
-                <Link
-                  to="/search"
-                  className="px-8 py-4 bg-green-600 text-white rounded-xl font-bold shadow-lg shadow-green-200 hover:bg-green-700 transform hover:-translate-y-1 transition duration-300 flex items-center gap-2"
-                >
-                  Find Medicines <ArrowRight className="w-5 h-5" />
-                </Link>
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <Link
                   to="/register"
-                  className="px-8 py-4 bg-white text-gray-900 border border-gray-200 rounded-xl font-bold shadow-sm hover:bg-gray-50 transform hover:-translate-y-1 transition duration-300"
+                  className="px-8 py-4 bg-green-600 text-white rounded-xl font-bold shadow-lg shadow-green-200 hover:bg-green-700 transform hover:-translate-y-1 transition duration-300 flex items-center justify-center gap-2"
+                >
+                  Get Started <ArrowRight className="w-5 h-5" />
+                </Link>
+                <Link
+                  to="/register?role=vendor"
+                  className="px-8 py-4 bg-white text-gray-900 border border-gray-200 rounded-xl font-bold shadow-sm hover:bg-gray-50 transform hover:-translate-y-1 transition duration-300 flex items-center justify-center"
                 >
                   Join as Partner
                 </Link>
               </div>
             </div>
             <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-teal-400 rounded-2xl blur-2xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
-              <div className="relative bg-white p-2 rounded-3xl shadow-2xl overflow-hidden transform group-hover:scale-[1.02] transition-transform duration-500">
+              <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-teal-400 rounded-2xl blur-3xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
+              <div className="relative bg-white p-3 rounded-[2.5rem] shadow-2xl overflow-hidden transform group-hover:scale-[1.01] transition-transform duration-700 ease-out">
                  <img 
                    src="https://images.unsplash.com/photo-1587854680352-936b22b91030?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
                    alt="Modern Pharmacy" 
-                   className="w-full h-auto rounded-2xl"
+                   className="w-full h-auto rounded-[1.8rem] object-cover"
                  />
-                 <div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-md p-4 rounded-xl shadow-lg flex items-center justify-between">
-                    <div className="flex -space-x-2">
-                       {[1,2,3,4].map(i => (
-                         <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-gray-200 overflow-hidden">
-                            <img src={`https://i.pravatar.cc/150?u=${i}`} alt="User" />
-                         </div>
-                       ))}
-                       <div className="w-10 h-10 rounded-full border-2 border-white bg-green-100 flex items-center justify-center text-green-700 text-xs font-bold">+5k</div>
-                    </div>
-                    <div className="flex items-center gap-1 text-yellow-500">
-                       <Star className="w-4 h-4 fill-current" />
-                       <span className="font-bold text-gray-900">4.9</span>
-                       <span className="text-gray-500 text-xs">(2k+ reviews)</span>
-                    </div>
-                 </div>
               </div>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Stats Section */}
-      <section className="py-12 bg-white relative z-20 -mt-16">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 grid grid-cols-2 md:grid-cols-4 divide-x divide-gray-100 py-10">
-            <div className="text-center px-6">
-              <div className="text-3xl font-black text-green-600 mb-1">500+</div>
-              <div className="text-gray-500 text-sm font-medium uppercase tracking-wider">Pharmacies</div>
-            </div>
-            <div className="text-center px-6">
-              <div className="text-3xl font-black text-green-600 mb-1">10k+</div>
-              <div className="text-gray-500 text-sm font-medium uppercase tracking-wider">Medicines</div>
-            </div>
-            <div className="text-center px-6">
-              <div className="text-3xl font-black text-green-600 mb-1">200+</div>
-              <div className="text-gray-500 text-sm font-medium uppercase tracking-wider">Experts</div>
-            </div>
-            <div className="text-center px-6">
-              <div className="text-3xl font-black text-green-600 mb-1">24/7</div>
-              <div className="text-gray-500 text-sm font-medium uppercase tracking-wider">AI Support</div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Features Section */}
       <section className="py-24 bg-gray-50">
@@ -154,10 +131,9 @@ const LandingPage = () => {
                            <div key={i} style={{ height: `${h}%` }} className="flex-1 bg-blue-400/50 mx-0.5 rounded-t-sm"></div>
                          ))}
                       </div>
-                      <div className="text-white text-sm font-medium flex justify-between items-center group cursor-pointer">
-                         <span>AI Analysis: Normal</span>
-                         <Star className="w-4 h-4 text-blue-400 fill-blue-400 animate-pulse" />
-                      </div>
+                       <div className="text-white text-sm font-medium flex justify-between items-center group cursor-pointer">
+                          <span>AI Analysis: Normal</span>
+                       </div>
                    </div>
                 </div>
              </div>
@@ -178,7 +154,6 @@ const LandingPage = () => {
           <div>
             <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-xs">For Users</h4>
             <ul className="space-y-4 text-sm">
-              <li><Link to="/search" className="hover:text-green-500 transition">Search Medicines</Link></li>
               <li><Link to="/chat" className="hover:text-green-500 transition">AI Assistant</Link></li>
               <li><Link to="/cart" className="hover:text-green-500 transition">My Cart</Link></li>
             </ul>

@@ -8,7 +8,7 @@ const router = express.Router();
 // Book an appointment (Patient only)
 router.post('/book', authMiddleware, patientMiddleware, async (req, res) => {
   try {
-    const { doctorId, day, startTime, endTime, reason } = req.body;
+    const { doctorId, day, startTime, endTime, reason, bookingType, totalFee } = req.body;
     const patientId = req.user.id;
 
     // Check if slot is still available in Doctor's profile
@@ -35,6 +35,8 @@ router.post('/book', authMiddleware, patientMiddleware, async (req, res) => {
       startTime,
       endTime,
       reason,
+      bookingType: bookingType || 'Clinic Visit',
+      totalFee: totalFee || 0,
       status: 'confirmed' // Auto-confirming for now, could be 'pending'
     });
 
@@ -42,6 +44,7 @@ router.post('/book', authMiddleware, patientMiddleware, async (req, res) => {
 
     // Mark slot as booked in doctor document
     slot.isBooked = true;
+    doctor.markModified('availableSlots');
     await doctor.save();
 
     res.status(201).json(appointment);
@@ -89,6 +92,7 @@ router.put('/cancel/:id', authMiddleware, async (req, res) => {
         const slot = dayObj.slots.find(s => s.startTime === appointment.startTime && s.endTime === appointment.endTime);
         if (slot) {
           slot.isBooked = false;
+          doctor.markModified('availableSlots');
           await doctor.save();
         }
       }

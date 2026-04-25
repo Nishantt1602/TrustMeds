@@ -33,6 +33,15 @@ const appointmentSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    bookingType: {
+      type: String,
+      enum: ['Clinic Visit', 'Home Visit'],
+      default: 'Clinic Visit',
+    },
+    totalFee: {
+      type: Number,
+      default: 0,
+    },
     notes: {
       type: String,
       default: '',

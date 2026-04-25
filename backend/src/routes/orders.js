@@ -8,7 +8,7 @@ const router = express.Router();
 // Create new order
 router.post('/', authMiddleware, async (req, res) => {
   try {
-    const { vendorId, vendorName, items, totalAmount } = req.body;
+    const { vendorId, vendorName, items, totalAmount, paymentMethod, paymentStatus } = req.body;
 
     if (!vendorId || !items || !items.length) {
       return res.status(400).json({ message: 'Invalid order structure or missing vendor ID' });
@@ -19,7 +19,9 @@ router.post('/', authMiddleware, async (req, res) => {
       vendorId,
       vendorName,
       items,
-      totalAmount
+      totalAmount,
+      paymentMethod: paymentMethod || 'cod',
+      paymentStatus: paymentStatus || 'pending'
     });
 
     await order.save();

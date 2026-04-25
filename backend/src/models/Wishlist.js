@@ -21,6 +21,11 @@ const wishlistSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    inventoryId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Inventory',
+      required: true,
+    },
     price: {
       type: Number,
       required: true,
@@ -29,7 +34,7 @@ const wishlistSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Ensure a user can only have one wishlist entry per medicine
-wishlistSchema.index({ userId: 1, medicineId: 1 }, { unique: true });
+// Ensure a user can wishlist a specific medicine from a specific vendor
+wishlistSchema.index({ userId: 1, medicineId: 1, vendorId: 1 }, { unique: true });
 
 export default mongoose.model('Wishlist', wishlistSchema);

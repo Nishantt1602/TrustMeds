@@ -17,11 +17,29 @@ router.get('/profile', authMiddleware, doctorMiddleware, async (req, res) => {
 // Update doctor professional details
 router.put('/update-details', authMiddleware, doctorMiddleware, async (req, res) => {
   try {
-    const { specialization, experienceYears, fees, qualifications, clinicAddress } = req.body;
+    const { 
+      specialization, 
+      experienceYears, 
+      fees, 
+      qualifications, 
+      clinicAddress,
+      isOnDuty,
+      homeVisitFees,
+      homeVisitEnabled
+    } = req.body;
     
     const doctor = await User.findByIdAndUpdate(
       req.user.id,
-      { specialization, experienceYears, fees, qualifications, clinicAddress },
+      { 
+        specialization, 
+        experienceYears, 
+        fees, 
+        qualifications, 
+        clinicAddress,
+        isOnDuty,
+        homeVisitFees,
+        homeVisitEnabled
+      },
       { new: true, runValidators: true }
     ).select('-password');
 

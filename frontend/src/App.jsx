@@ -13,6 +13,9 @@ import MyAppointments from './pages/Dashboard/MyAppointments'; // NEW
 import UserProfile from './pages/Dashboard/UserProfile'; // NEW - Moved to src folder
 import LandingPage from './pages/Core/LandingPage';
 import DoctorSearch from './pages/Core/DoctorSearch'; // NEW
+import OrderSuccess from './pages/Core/OrderSuccess'; // NEW
+import CheckoutPage from './pages/Core/CheckoutPage'; // NEW
+import AppointmentCheckout from './pages/Core/AppointmentCheckout'; // NEW
 import ProtectedRoute from './components/routing/ProtectedRoute';
 import { Toaster } from 'react-hot-toast';
 
@@ -45,6 +48,17 @@ function App() {
                 } />
                 <Route path="/doctors" element={<DoctorSearch />} />
                 <Route path="/profile" element={<UserProfile />} />
+                <Route path="/order-success" element={<OrderSuccess />} />
+                <Route path="/checkout" element={
+                  <ProtectedRoute>
+                    <CheckoutPage />
+                  </ProtectedRoute>
+                } />
+                <Route path="/appointment-checkout" element={
+                  <ProtectedRoute>
+                    <AppointmentCheckout />
+                  </ProtectedRoute>
+                } />
               </Routes>
             </main>
           </div>

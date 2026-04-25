@@ -61,6 +61,19 @@ const userSchema = new mongoose.Schema(
         ],
       },
     ],
+    isOnDuty: {
+      type: Boolean,
+      default: true,
+    },
+    homeVisitFees: {
+      type: Number,
+      default: 0,
+      min: [0, 'Home visit fees cannot be negative'],
+    },
+    homeVisitEnabled: {
+      type: Boolean,
+      default: false,
+    },
     phone: {
       type: String,
       required: true,
@@ -73,6 +86,14 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    medicationReminders: [
+      {
+        pillName: { type: String, required: true },
+        time: { type: String, required: true }, // HH:mm
+        frequency: { type: String, default: 'Daily' },
+        isActive: { type: Boolean, default: true }
+      }
+    ],
   },
   { timestamps: true }
 );

@@ -32,8 +32,34 @@ router.put('/update', authMiddleware, async (req, res) => {
       address: user.address,
       role: user.role,
       storeName: user.storeName,
+      medicationReminders: user.medicationReminders || [],
       message: 'Profile updated successfully',
     });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Add medication reminder
+router.post('/reminders', authMiddleware, async (req, res) => {
+  try {
+    const { pillName, time, frequency } = req.body;
+    const user = await User.findById(req.user.id);
+    user.medicationReminders.push({ pillName, time, frequency });
+    await user.save();
+    res.json(user.medicationReminders);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Delete medication reminder
+router.delete('/reminders/:reminderId', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    user.medicationReminders = user.medicationReminders.filter(r => r._id.toString() !== req.params.reminderId);
+    await user.save();
+    res.json(user.medicationReminders);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
