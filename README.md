@@ -91,4 +91,4 @@ TrustMeds/
 2. **Frontend**: Push to GitHub, connect to Vercel, set `VITE_API_URL` to your backend URL.
 
 ---
-Built with ❤️ by Antigravity for the TrustMeds Community.
+the TrustMeds Community.
