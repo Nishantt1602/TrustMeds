@@ -20,12 +20,8 @@ dotenv.config();
 const app = express();
 
 // Middleware
-// Line 23 ko aise badlo:
-app.use(cors({
-  origin: "https://trust-meds.vercel.app", // Apna naya frontend URL yahan dalo
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
-}));
+app.use(cors());
+app.use(express.json());
 
 // Connect to MongoDB
 connectDB();
