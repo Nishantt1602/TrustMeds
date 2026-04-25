@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api', // Backend URL
+  baseURL: import.meta.env.VITE_API_URL || 'https://trustmeds-backend.vercel.app/api', // Backend URL
 });
 
 // Automatically attach JWT token to every request if logged in
