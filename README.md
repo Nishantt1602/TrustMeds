@@ -77,18 +77,5 @@ TrustMeds/
    cd frontend
    npm install
    npm run dev
-   ```
-
-## 🌍 Deployment Guide
-
-### MongoDB Atlas
-1. Create a cluster on MongoDB Atlas.
-2. Get your connection string.
-3. Replace `localhost` in your backend `.env` with the Atlas URI.
-
-### Vercel (Frontend & Backend)
-1. **Backend**: Push to GitHub, connect to Vercel, set Environment Variables.
-2. **Frontend**: Push to GitHub, connect to Vercel, set `VITE_API_URL` to your backend URL.
-
----
+   ---
 the TrustMeds Community.
